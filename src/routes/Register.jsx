@@ -8,13 +8,15 @@ import ProfileImg from "./../assets/default.jpeg";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/index.css'
 
+import { signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { auth, provider } from "../firebase";
+
 
 const Register = () => {
     //登録ページのタイトル
     const registerTitle = [
         "新規登録",
-        "情報登録",
-        "情報登録",
         "情報登録",
         "情報登録",
     ];
@@ -23,9 +25,7 @@ const Register = () => {
     const btnLabel = [
         "ReferMeに登録",
         "この情報で登録1",
-        "この情報で登録2",
-        "この情報で登録3",
-        "この情報で登録4",
+        "登録",
     ];
 
     //職業の質問の選択肢
@@ -40,11 +40,27 @@ const Register = () => {
 
     const [registerState, setState] = React.useState(0);
 
+    console.log(registerState);
+
     //ボタンを押したとき、regiterStateを変更してコンポーネントを入れ替える処理
+    const navigate = useNavigate();
     const handleState = () => {
         if (registerState === 0) {
             let mailAddress = document.getElementById('mailAddress');
             console.log(mailAddress.value);
+        }
+
+        if (registerState === 2) {
+            // Googleでログイン
+            signInWithPopup(auth, provider).then((result) => {
+                // ログインするとコンソールにresultが表示される
+                console.log(result);
+                // ローカルストレージに状態を保持
+                localStorage.setItem("isAuth", true);
+
+                // homeにとばす
+                navigate("/");
+            });
         }
         setState(registerState + 1);
     }
@@ -64,9 +80,6 @@ const Register = () => {
                                 <TextInput id="password" className="" placeholder={'パスワード'} type="password" text={'Hello World'} />
                             </div>
                         </div>
-                        <div className="mt-2">
-                            <button className='register-btn fs-6' onClick={() => { handleState() }}>{btnLabel[registerState]}</button>
-                        </div>
                     </div>
                 }
 
@@ -85,9 +98,6 @@ const Register = () => {
                                 <TextInput placeholder={'名'} type="search" />
                             </div>
                         </div>
-                        <div className="mt-2">
-                            <button className='register-btn fs-6' onClick={() => { handleState() }}>{btnLabel[registerState]}</button>
-                        </div>
                     </div>
                 }
 
@@ -99,9 +109,12 @@ const Register = () => {
                                 <Select items={firstOption} key={firstOption} />
                             </div>
                         </div>
-                        <Link to="/"></Link>
                     </div>
                 }
+
+                <div className="mt-2">
+                    <button className='register-btn fs-6' onClick={() => { handleState() }}>{btnLabel[registerState]}</button>
+                </div>
 
                 <div className="my-5">
                     <Link to="/login" className='text-secondary text-decoration-none fs-6'>ログインページに移動</Link>
