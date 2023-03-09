@@ -12,8 +12,8 @@ import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../firebase";
 
-
 const Register = () => {
+
     //登録ページのタイトル
     const registerTitle = [
         "新規登録",
@@ -40,25 +40,18 @@ const Register = () => {
 
     const [registerState, setState] = React.useState(0);
 
-    console.log(registerState);
-
     //ボタンを押したとき、regiterStateを変更してコンポーネントを入れ替える処理
     const navigate = useNavigate();
     const handleState = () => {
         if (registerState === 0) {
             let mailAddress = document.getElementById('mailAddress');
-            console.log(mailAddress.value);
         }
 
         if (registerState === 2) {
-            // Googleでログイン
-            signInWithPopup(auth, provider).then((result) => {
-                // ログインするとコンソールにresultが表示される
-                console.log(result);
-                // ローカルストレージに状態を保持
+            //FirebaseのAuthrizationのGoogleを有効にしないとエラーが発生する
+            signInWithPopup(auth, provider).then(() => {
+                //セッションにデータを保持
                 localStorage.setItem("isAuth", true);
-
-                // homeにとばす
                 navigate("/");
             });
         }
